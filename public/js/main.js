@@ -119,7 +119,6 @@ askQuestionForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const qst = e.target.elements.qst.value;
-
     socket.emit('askedQuestion', qst);
 
     e.target.elements.qst.value = '';
