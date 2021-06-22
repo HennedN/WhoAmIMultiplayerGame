@@ -94,6 +94,10 @@ socket.on('playerSolved', ({currentGameMaster, currentTurnPlayer, roomUsers}) =>
   socket.emit('setNextGameMaster', {currentGameMaster, currentTurnPlayer})
 });
 
+socket.emit('waitForMore', () => {
+  alert('You have to be 3 Player in a Lobby to start!')
+})
+
 socket.on('resetGame', (gameMaster)=>{
   if (gameMaster.id === socket.id) {
     startGameBtn.hidden = false;

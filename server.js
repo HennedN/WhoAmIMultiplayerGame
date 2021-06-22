@@ -29,9 +29,13 @@ io.on('connection', socket => {
     });
 
     socket.on('gameStarted', () => {
-      
-      gameMaster.turn = true;
-      io.to(user.room).emit('chooseWord', gameMaster);
+      if (getRoomUsers(user.room).length >= 3) {
+        gameMaster.turn = true;
+        io.to(user.room).emit('chooseWord', gameMaster);
+      }else{
+        io.to(user.room).emit('waitForMore');
+      }
+
     });
 
     socket.on('wordChosen', () => {
