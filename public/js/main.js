@@ -89,8 +89,11 @@ socket.on('nextPlayerTurn', (currentTurnPlayer) => {
 });
 
 socket.on('playerSolved', ({currentGameMaster, currentTurnPlayer, roomUsers}) => {
-  alert(`${currentTurnPlayer.username} guessed who ${currentGameMaster.username} is!`);
-  clearGameLog()
+  const winner = `${currentTurnPlayer.username} guessed who ${currentGameMaster.username} is!`;
+  outputQuestion(winner, 'info');
+  setTimeout(function() {
+    clearGameLog();
+  }, 5000);
   outputUsers(roomUsers);
   socket.emit('setNextGameMaster', {currentGameMaster, currentTurnPlayer, roomUsers})
 });
@@ -177,8 +180,10 @@ function outputQuestion(qst, status) {
   }else if (status === 'false') {
     div.classList.add('bg-danger', 'border');
   }else if (status === 'solved') {
-    div.classList.add('bg-alert', 'border');
-  }else {
+    div.classList.add('bg-warning', 'border');
+  }else if (status === 'info') {
+    div.classList.add('bg-info', 'border');
+  }else{
     div.classList.add('border');
   }
 
