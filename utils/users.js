@@ -1,7 +1,7 @@
 const users = [];
 
 function userJoin(index, id, username, room, role, turn, points) {
-    const user = {index, id, username, room, role, turn, points};
+    let user = {index, id, username, room, role, turn, points};
     
     users.push(user);
     return user;
@@ -11,8 +11,21 @@ function getCurrentUser(id) {
     return users.find(user => user.id === id);
 }
 
-function setCurrentGameMaster(users) {
-    return users[0].role = 'Game Master';
+function setCurrentGameMaster(users, gameMaster) {
+    var newGameMaster;
+    for (let index = 0; index < users.length; index++) {
+        const user = users[index];
+        user.role = 'player'
+    }
+    if (gameMaster === null){
+        newGameMaster = users[0];
+        newGameMaster.role = 'Game Master';
+        return newGameMaster;
+    }else{
+        newGameMaster = users.find(user => user.id === gameMaster.id);
+        newGameMaster.role = 'Game Master';
+        return newGameMaster;
+    }
 }
 
 function getCurrentGameMaster(users) {

@@ -17,31 +17,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 io.on('connection', socket => {
   socket.on('joinRoom', ({ username, room }) =>{
     index = getRoomUsers(room).length;
-    const user = userJoin(index, socket.id ,username, room, 'player', false, 0);
+    var user = userJoin(index, socket.id ,username, room, 'player', false, 0);
     socket.join(user.room);
     getRoomUsers(room)[0].points = 1;
-    setCurrentGameMaster(getRoomUsers(user.room));
-    const gameMaster = getCurrentGameMaster(getRoomUsers(user.room))
-    socket.emit('gameMaster', gameMaster)
+    var newGameMaster = null;
+    var gameMaster = setCurrentGameMaster( getRoomUsers(user.room), newGameMaster)
+    io.to(user.room).emit('gameMaster', gameMaster)
 
     socket.on('askedQuestion', (qst) => {
       io.to(user.room).emit('question', qst);
     });
 
     socket.on('gameStarted', () => {
-      if (getRoomUsers(user.room).length >= 3) {
-        gameMaster.turn = true;
-        io.to(user.room).emit('chooseWord', gameMaster);
-      }else{
-        io.to(user.room).emit('waitForMore');
-      }
-
+      var users = getRoomUsers(gameMaster.room)
+      newGameMaster = setCurrentGameMaster(users, newGameMaster);
+      io.to(user.room).emit('chooseWord', newGameMaster);
     });
 
     socket.on('wordChosen', () => {
       gameMaster.turn = false;
-      getRoomUsers(user.room)[1].turn = true;
-      io.to(user.room).emit('firstQuestion',getRoomUsers(user.room));
+      var nextTurnPlayer = setNextTurnPlayer(user.room);
+      io.to(user.room).emit('nextPlayerTurn', nextTurnPlayer);
+      io.to(user.room).emit('firstQuestion',nextTurnPlayer);
     });
 
     socket.on('gameMasterTurn', () => {
@@ -75,11 +72,12 @@ io.on('connection', socket => {
       }      
     });
 
-    socket.on('setNextGameMaster', ({currentGameMaster, currentTurnPlayer}) => {
+    socket.on('setNextGameMaster', ({currentGameMaster, currentTurnPlayer, roomUsers}) => {
       currentGameMaster.role = 'player';
-      var newGameMaster = currentTurnPlayer;
-      newGameMaster.role = 'Game Master';
-      io.to(user.room).emit('resetGame', newGameMaster);
+      newGameMaster = currentTurnPlayer;
+      gameMaster = setCurrentGameMaster(roomUsers, newGameMaster);
+
+      io.to(user.room).emit('resetGame', gameMaster);
     });
 
     io.to(user.room).emit('roomUsers', {

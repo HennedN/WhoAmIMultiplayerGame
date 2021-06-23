@@ -29,13 +29,14 @@ socket.on('roomUsers', ({ room, users }) => {
 
 socket.on('gameMaster', gameMaster => {
   if (gameMaster.id === socket.id) {
-    startGameBtn.hidden = false;
     yesBtn.hidden = false;
     noBtn.hidden = false;
     solvedBtn.hidden = false;
     yesBtn.disabled = true;
     noBtn.disabled = true;
     solvedBtn.disabled = true;
+  }else{
+    startGameBtn.hidden  =true
   }
 });
 
@@ -45,8 +46,8 @@ socket.on('chooseWord', (gameMaster) => {
   }
 });
 
-socket.on('firstQuestion', (users) => {
-  if (users[1].id === socket.id && users[1].turn === true) {
+socket.on('firstQuestion', (nextTurnPlayer) => {
+  if (nextTurnPlayer.id === socket.id && nextTurnPlayer.turn === true) {
     qst2.readOnly = false;
     askBtn.disabled = false;
   }
@@ -91,7 +92,7 @@ socket.on('playerSolved', ({currentGameMaster, currentTurnPlayer, roomUsers}) =>
   alert(`${currentTurnPlayer.username} guessed who ${currentGameMaster.username} is!`);
   clearGameLog()
   outputUsers(roomUsers);
-  socket.emit('setNextGameMaster', {currentGameMaster, currentTurnPlayer})
+  socket.emit('setNextGameMaster', {currentGameMaster, currentTurnPlayer, roomUsers})
 });
 
 socket.emit('waitForMore', () => {
