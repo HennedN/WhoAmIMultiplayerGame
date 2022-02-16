@@ -4,13 +4,45 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/app.css">
 	<title>Who Am I?</title>
 </head>
-<body>
-	<form action="game.html" method="GET">
-		<input name="username" type="text" required>
-		<input name="room" type="text">
-		<button>Start Game</button>
-	</form>
+<body class="bg-gray-700">
+	<div class="flex flex-col">
+		<div class="text-center py-12 flex flex-col ">
+			<h1 class="text-4xl text-white">Who Am I?</h1>
+			<h2 class="text-2xl text-white">Guess who your friends think about</h2>
+		</div>
+		<div class="w-full flex justify-center py-12">
+			<form action="game.html" method="GET" id="form" class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+
+				<div class="mb-6">
+					<input name="room" hidden id="room" type="text" placeholder="Room Code">
+				</div>
+				<div class="flex justify-center">
+					<button id="submitBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+						Create A Room
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script>
+		const submitBtn = document.getElementById('submitBtn');
+		const room = document.getElementById('room');
+		const form = document.getElementById('form');
+		submitBtn.addEventListener('click', (e) =>{
+			e.preventDefault();
+			generateRoomID();
+		});
+
+		function generateRoomID() {
+			
+				room.value = Math.round((Math.pow(36, 5 + 1) - Math.random() * Math.pow(36, 5))).toString(36).slice(1);
+				
+				form.submit();
+				console.log(submitBtn.value);
+		}
+	</script>
 </body>
 </html>

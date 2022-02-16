@@ -13,14 +13,24 @@ const userList = document.getElementById('users');
 
 
 // Get username and room from URL
-const { username, room } = Qs.parse(location.search, {
+let { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
 const socket = io();
 
 // Join Game Lobby
-socket.emit('joinRoom', { username, room });
+if (username) {
+  socket.emit('joinRoom', { username, room });
+} else {
+  username = prompt('Enter a Username');
+  if (username){
+    socket.emit('joinRoom', { username, room });
+  }
+  else{
+    window.location.replace("/");
+  }
+}
 
 socket.on('roomUsers', ({ room, users }) => {
   outputRoomName(room);
@@ -198,9 +208,8 @@ function clearGameLog() {
 }
 
 // add room name to DOM
-
 function outputRoomName(room) {
-  roomName.innerText = room;
+  roomName.innerText = "Room Link: " + window.location.href + room;
 }
 
 // Add users to DOM
